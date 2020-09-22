@@ -53,6 +53,11 @@ class ouraniaaltarOverlay extends OverlayPanel
         timeFormat = (duration.toHours() < 1) ? "mm:ss" : "HH:mm:ss";
         tableComponent.addRow("Time:", formatDuration(duration.toMillis(), timeFormat));
         tableComponent.addRow("Status:", plugin.status);
+        tableComponent.addRow("Progress: ", String.valueOf(plugin.runecraftProgress));
+        tableComponent.addRow("Essence: ", plugin.currentEss + " (-" + (plugin.startEss - plugin.currentEss) + ")");
+        tableComponent.addRow("Delay: ", String.valueOf(plugin.tickTimer));
+        tableComponent.addRow("craftingTimer: ", String.valueOf(plugin.craftingTimer));
+        tableComponent.addRow("DROP_RUNE_IDS: ", plugin.DROP_RUNE_IDS.toString());
 
 
         if (!tableComponent.isEmpty())
@@ -61,10 +66,18 @@ class ouraniaaltarOverlay extends OverlayPanel
             panelComponent.setPreferredSize(new Dimension(200, 200));
             panelComponent.setBorder(new Rectangle(5, 5, 5, 5));
             panelComponent.getChildren().add(TitleComponent.builder()
-                    .text("Superglass Maker")
+                    .text("El Ourania")
+                    .color(ColorUtil.fromHex("#40C4FF"))
+                    .build());
+            panelComponent.getChildren().add(TitleComponent.builder()
+                    .text("Elli-tt#4728")
                     .color(ColorUtil.fromHex("#40C4FF"))
                     .build());
             panelComponent.getChildren().add(tableComponent);
+            panelComponent.getChildren().add(TitleComponent.builder()
+                    .text("WIP DONT HATE")
+                    .color(ColorUtil.fromHex("#40C4FF"))
+                    .build());
         }
         return super.render(graphics);
     }
