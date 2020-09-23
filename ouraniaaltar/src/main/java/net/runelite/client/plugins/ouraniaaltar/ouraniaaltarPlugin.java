@@ -223,6 +223,7 @@ public class ouraniaaltarPlugin extends Plugin
 				break;
 			case "MOVING":
 				tickTimer=0;
+				utils.handleRun(30, 20);
 				break;
 			case "OPENING_BANK":
 				if(runecraftProgress==17){

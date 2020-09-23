@@ -30,7 +30,7 @@ project.extra["PluginDescription"] = "Blows your glass" // This is the descripti
 
 
 dependencies {
-    compileOnly(group = "com.openosrs.externals", name = "botutils", version = "3.9.3");
+    compileOnly(group = "com.openosrs.externals", name = "botutils", version = "4.4.4");
 }
 
 tasks {

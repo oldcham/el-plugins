@@ -23,13 +23,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "1.0.1"
+version = "1.0.2"
 
 project.extra["PluginName"] = "El ZMI" // This is the name that is used in the external plugin manager panel
 project.extra["PluginDescription"] = "Crafts runes for you" // This is the description that is used in the external plugin manager panel
 
 dependencies {
-    compileOnly(group = "com.openosrs.externals", name = "botutils", version = "3.9.3");
+    compileOnly(group = "com.openosrs.externals", name = "botutils", version = "4.4.4");
 }
 
 tasks {
