@@ -223,7 +223,7 @@ public class ouraniaaltarPlugin extends Plugin
 				break;
 			case "MOVING":
 				tickTimer=0;
-				utils.handleRun(30, 20);
+				shouldRun();
 				break;
 			case "OPENING_BANK":
 				if(runecraftProgress==17){
@@ -631,6 +631,20 @@ public class ouraniaaltarPlugin extends Plugin
 				DROP_RUNE_IDS.remove(i);
 				utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
 				return;
+			}
+		}
+	}
+
+	private void shouldRun()
+	{
+		if(client.getWidget(160,23)!=null){ //if run widget is visible
+			if(Integer.parseInt(client.getWidget(160,23).getText())>(30+utils.getRandomIntBetweenRange(0,20))){ //if run > 30+~20
+				if(client.getVarbitValue(173)==0){ //if run is off
+					targetMenu = new MenuEntry("Toggle Run","",1,57,-1,10485782,false);
+					utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
+					return;
+				}
+
 			}
 		}
 	}

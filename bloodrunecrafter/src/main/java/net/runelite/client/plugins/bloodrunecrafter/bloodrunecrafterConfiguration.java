@@ -258,7 +258,7 @@ public interface bloodrunecrafterConfiguration extends Config
 	)
 	default boolean craftBloods()
 	{
-		return false;
+		return true;
 	}
 
 	@ConfigItem(
