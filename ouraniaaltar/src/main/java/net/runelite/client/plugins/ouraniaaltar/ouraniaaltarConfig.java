@@ -81,10 +81,20 @@ public interface ouraniaaltarConfig extends Config
 	default String dropRunesString() { return "554,555,556,557,558,559"; }
 
 	@ConfigItem(
+			keyName = "noStams",
+			name = "No Staminas",
+			description = "Tick this if you don't have any stamina potions.",
+			position = 5
+	)
+	default boolean noStams() { return false; }
+
+	@ConfigItem(
 			keyName = "minEnergy",
 			name = "Minimum Energy",
 			description = "Minimum energy before stam pot drank",
-			position = 13
+			position = 13,
+			hidden = false,
+			hide = "noStams"
 	)
 	default int minEnergy() { return 35; }
 

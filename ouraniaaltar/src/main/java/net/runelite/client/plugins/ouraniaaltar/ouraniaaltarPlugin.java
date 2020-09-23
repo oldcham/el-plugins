@@ -101,18 +101,18 @@ public class ouraniaaltarPlugin extends Plugin
 	protected void startUp()
 	{
 		botTimer = Instant.now();
-		log.info("Plugin started");
 		setValues();
 		startOuraniaAltar=false;
+		log.info("Plugin started");
 	}
 
 	@Override
 	protected void shutDown()
 	{
 		overlayManager.remove(overlay);
-		log.info("Plugin stopped");
 		setValues();
 		startOuraniaAltar=false;
+		log.info("Plugin stopped");
 	}
 
 	@Subscribe
@@ -223,7 +223,9 @@ public class ouraniaaltarPlugin extends Plugin
 				break;
 			case "MOVING":
 				tickTimer=0;
-				shouldRun();
+				if(config.noStams()){
+					shouldRun();
+				}
 				break;
 			case "OPENING_BANK":
 				if(runecraftProgress==17){
@@ -296,7 +298,7 @@ public class ouraniaaltarPlugin extends Plugin
 		}
 		if(player.getPoseAnimation()!=813){
 			if(!player.getWorldLocation().equals(new WorldPoint(3058, 5579, 0))){
-				return "Moving";
+				return "MOVING";
 			}
 		}
 
@@ -389,15 +391,17 @@ public class ouraniaaltarPlugin extends Plugin
 		}
 		currentEss = utils.getBankItemWidget(ESSENCE_ID).getItemQuantity();
 		tickTimer=0;
-		if(client.getVar(Varbits.RUN_SLOWED_DEPLETION_ACTIVE)==0 && checkRunEnergy()<config.minEnergy()){
-			if(utils.inventoryContains(12631)){
-				targetMenu = new MenuEntry("Drink","<col=ff9040>Stamina potion(1)</col>",9,1007,utils.getInventoryWidgetItem(12631).getIndex(),983043,false);
-				utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
-				return "DRINKING_STAM";
-			} else {
-				targetMenu = new MenuEntry("Withdraw-1","<col=ff9040>Stamina potion(1)</col>",1,57,utils.getBankItemWidget(12631).getIndex(),786444,false);
-				utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
-				return "WITHDRAW_STAM";
+		if(!config.noStams()){
+			if(client.getVar(Varbits.RUN_SLOWED_DEPLETION_ACTIVE)==0 && checkRunEnergy()<config.minEnergy()){
+				if(utils.inventoryContains(12631)){
+					targetMenu = new MenuEntry("Drink","<col=ff9040>Stamina potion(1)</col>",9,1007,utils.getInventoryWidgetItem(12631).getIndex(),983043,false);
+					utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
+					return "DRINKING_STAM";
+				} else {
+					targetMenu = new MenuEntry("Withdraw-1","<col=ff9040>Stamina potion(1)</col>",1,57,utils.getBankItemWidget(12631).getIndex(),786444,false);
+					utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
+					return "WITHDRAW_STAM";
+				}
 			}
 		}
 		if(checkHitpoints()<config.minHealth()){
@@ -644,7 +648,6 @@ public class ouraniaaltarPlugin extends Plugin
 					utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
 					return;
 				}
-
 			}
 		}
 	}
