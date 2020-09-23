@@ -7,8 +7,6 @@ import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
-import net.runelite.api.queries.GameObjectQuery;
-import net.runelite.api.queries.TileQuery;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -16,29 +14,19 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
-import net.runelite.client.plugins.botutils.Runes;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.http.api.ge.GrandExchangeClient;
 import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
-import net.runelite.rs.api.RSMenuAction;
 import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
 import net.runelite.client.plugins.botutils.BotUtils;
-import static net.runelite.client.plugins.botutils.Banks.BANK_SET;
-
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 @Extension
 @PluginDescriptor(
-	name = "Ourania Crafter",
+	name = "El ZMI",
 	description = "Crafts at ourania altar.",
 	type = PluginType.SKILLING
 )
@@ -73,6 +61,7 @@ public class ouraniaaltarPlugin extends Plugin
 	int clientTickBreak = 0;
 	int withdrawClickCount = 0;
 	int tickTimer;
+	boolean startOuraniaAltar;
 	String status = "UNKNOWN";
 	int runecraftProgress = 0;
 	//overlay data
@@ -111,10 +100,10 @@ public class ouraniaaltarPlugin extends Plugin
 	@Override
 	protected void startUp()
 	{
-		overlayManager.add(overlay);
 		botTimer = Instant.now();
 		log.info("Plugin started");
 		setValues();
+		startOuraniaAltar=false;
 	}
 
 	@Override
@@ -123,6 +112,39 @@ public class ouraniaaltarPlugin extends Plugin
 		overlayManager.remove(overlay);
 		log.info("Plugin stopped");
 		setValues();
+		startOuraniaAltar=false;
+	}
+
+	@Subscribe
+	private void onConfigButtonPressed(ConfigButtonClicked configButtonClicked)
+	{
+		if (!configButtonClicked.getGroup().equalsIgnoreCase("ouraniaaltarConfig"))
+		{
+			return;
+		}
+		log.info("button {} pressed!", configButtonClicked.getKey());
+		if (configButtonClicked.getKey().equals("startButton"))
+		{
+			if (!startOuraniaAltar)
+			{
+				startOuraniaAltar = true;
+				targetMenu = null;
+				botTimer = Instant.now();
+				overlayManager.add(overlay);
+			} else {
+				shutDown();
+			}
+		}
+	}
+
+	@Subscribe
+	private void onConfigChanged(ConfigChanged event)
+	{
+		if (!event.getGroup().equals("ouraniaaltarConfig"))
+		{
+			return;
+		}
+		startOuraniaAltar = false;
 	}
 
 	private void setValues()
@@ -182,6 +204,16 @@ public class ouraniaaltarPlugin extends Plugin
 	@Subscribe
 	private void onGameTick(GameTick gameTick)
 	{
+		if (!startOuraniaAltar)
+		{
+			return;
+		}
+		if (!client.isResized())
+		{
+			utils.sendGameMessage("client must be set to resizable");
+			startOuraniaAltar = false;
+			return;
+		}
 		clientTickCounter=0;
 		status = checkPlayerStatus();
 		switch (status) {
@@ -242,12 +274,6 @@ public class ouraniaaltarPlugin extends Plugin
 					targetMenu.getParam0(), targetMenu.getParam1());
 			targetMenu = null;
 		}
-
-	}
-
-	@Subscribe
-	private void onItemContainerChanged(ItemContainerChanged event)
-	{
 
 	}
 

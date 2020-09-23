@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 
 @Extension
 @PluginDescriptor(
-	name = "Superglass Maker",
+	name = "El Superglass",
 	description = "Makes superglass.",
 	type = PluginType.SKILLING
 )
@@ -72,6 +72,7 @@ public class superglassmakerPlugin extends Plugin
 	int tickTimer;
 	String status = "UNKNOWN";
 	boolean clientTickBanking;
+	boolean startSuperglassMaker;
 
 	//overlay data
 	int seaweedStart = -1;
@@ -107,9 +108,9 @@ public class superglassmakerPlugin extends Plugin
 		clientTickBreak=0;
 		withdrawClickCount=-1;
 		clientTickBanking = false;
-		overlayManager.add(overlay);
 		botTimer = Instant.now();
 		log.info("Plugin started");
+		startSuperglassMaker=false;
 
 	}
 
@@ -118,11 +119,55 @@ public class superglassmakerPlugin extends Plugin
 	{
 		overlayManager.remove(overlay);
 		log.info("Plugin stopped");
+		startSuperglassMaker=false;
+	}
+
+	@Subscribe
+	private void onConfigButtonPressed(ConfigButtonClicked configButtonClicked)
+	{
+		if (!configButtonClicked.getGroup().equalsIgnoreCase("superglassmakerConfig"))
+		{
+			return;
+		}
+		log.info("button {} pressed!", configButtonClicked.getKey());
+		if (configButtonClicked.getKey().equals("startButton"))
+		{
+			if (!startSuperglassMaker)
+			{
+				startSuperglassMaker = true;
+				targetMenu = null;
+				botTimer = Instant.now();
+				overlayManager.add(overlay);
+			} else {
+				shutDown();
+			}
+		}
+	}
+
+	@Subscribe
+	private void onConfigChanged(ConfigChanged event)
+	{
+		if (!event.getGroup().equals("superglassmakerConfig"))
+		{
+			return;
+		}
+		startSuperglassMaker = false;
 	}
 
 	@Subscribe
 	private void onGameTick(GameTick gameTick)
 	{
+		if (!startSuperglassMaker)
+		{
+			return;
+		}
+		if (!client.isResized())
+		{
+			utils.sendGameMessage("client must be set to resizable");
+			startSuperglassMaker = false;
+			return;
+		}
+
 		status = checkPlayerStatus();
 		log.info(status);
 

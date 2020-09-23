@@ -108,4 +108,26 @@ public interface firemakerConfig extends Config
 			unhide = "customTickDelays"
 	)
 	default int tickDelayTarg() { return 3; }
+
+	@ConfigItem(
+			keyName = "enableUI",
+			name = "Enable UI",
+			description = "Enable to turn on in game UI",
+			position = 140
+	)
+	default boolean enableUI()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "startButton",
+			name = "Start/Stop",
+			description = "Test button that changes variable value",
+			position = 150
+	)
+	default Button startButton()
+	{
+		return new Button();
+	}
 }

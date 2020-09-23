@@ -24,6 +24,7 @@
  */
 package net.runelite.client.plugins.superglassmaker;
 
+import net.runelite.client.config.Button;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -33,10 +34,23 @@ import net.runelite.client.config.ConfigItem;
 public interface superglassmakerConfig extends Config
 {
 	@ConfigItem(
+			keyName = "instructions1",
+			name = "",
+			description = "Instructions. Don't enter anything into this field",
+			position = 0,
+			titleSection = "instructionsTitle"
+	)
+	default String instructions1()
+	{
+		return "Stand in a bank with astral runes in your inventory. " +
+				"Wear Staff of Air and Tome of Fire/Smoke Battlestaff.";
+	}
+
+	@ConfigItem(
 		keyName = "pickupExtraGlass",
 		name = "Pick up extra glass",
 		description = "Picks up extra glass.",
-		position = 0
+		position = 1
 	)
 	default boolean pickupExtraGlass()
 	{
@@ -55,14 +69,14 @@ public interface superglassmakerConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "instructions",
+			keyName = "instructions2",
 			name = "",
 			description = "Instructions. Don't enter anything into this field",
 			position = 3,
 			hidden = true,
 			unhide = "useCustomDelays"
 	)
-	default String instructions()
+	default String instructions2()
 	{
 		return "Please enter your custom delays below, they should be in the form:" +
 				"\"minimum,maximum,target,variance\"";
@@ -79,5 +93,27 @@ public interface superglassmakerConfig extends Config
 	default String customDelays()
 	{
 		return "1,5,3,1";
+	}
+
+	@ConfigItem(
+			keyName = "enableUI",
+			name = "Enable UI",
+			description = "Enable to turn on in game UI",
+			position = 140
+	)
+	default boolean enableUI()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "startButton",
+			name = "Start/Stop",
+			description = "Test button that changes variable value",
+			position = 150
+	)
+	default Button startButton()
+	{
+		return new Button();
 	}
 }

@@ -123,7 +123,7 @@ public interface glassblowerConfig extends Config
 
 	@ConfigItem(
 			keyName = "fastBank",
-			name = "Bank Fast",
+			name = "[EXPERIMENTAL] Bank Fast",
 			description = "Banks faster than normal.",
 			position = 9
 	)
@@ -141,5 +141,27 @@ public interface glassblowerConfig extends Config
 	default boolean grandExchange()
 	{
 		return false;
+	}
+
+	@ConfigItem(
+			keyName = "enableUI",
+			name = "Enable UI",
+			description = "Enable to turn on in game UI",
+			position = 140
+	)
+	default boolean enableUI()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "startButton",
+			name = "Start/Stop",
+			description = "Test button that changes variable value",
+			position = 150
+	)
+	default Button startButton()
+	{
+		return new Button();
 	}
 }

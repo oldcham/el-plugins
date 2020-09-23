@@ -234,7 +234,7 @@ public interface bloodrunecrafterConfiguration extends Config
 	)
 	default String instructions()
 	{
-		return "If you want to craft blood make sure to tick the box." +
+		return "If you want to craft blood make sure to tick the box. " +
 			"Otherwise it will manually mine dense essence for you and then wait.";
 	}
 

@@ -4,13 +4,15 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
+import net.runelite.api.Client;
+import net.runelite.api.GameObject;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.Point;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.ConfigButtonClicked;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.queries.GameObjectQuery;
-import net.runelite.api.queries.TileQuery;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -18,69 +20,23 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
-import net.runelite.client.plugins.botutils.Runes;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.http.api.ge.GrandExchangeClient;
 import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
-import net.runelite.rs.api.RSMenuAction;
 import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
 import net.runelite.client.plugins.botutils.BotUtils;
-import static net.runelite.client.plugins.botutils.Banks.BANK_SET;
-
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import com.google.inject.Provides;
 import java.awt.Rectangle;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import javax.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
-import net.runelite.api.GameObject;
-import net.runelite.api.MenuEntry;
-import net.runelite.api.NPC;
-import net.runelite.api.NullObjectID;
-import net.runelite.api.ObjectID;
-import net.runelite.api.Player;
-import net.runelite.api.GameState;
-import net.runelite.api.MenuOpcode;
-import net.runelite.api.coords.LocalPoint;
-import net.runelite.api.coords.WorldArea;
-import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.GameTick;
-import net.runelite.api.events.ItemContainerChanged;
-import net.runelite.api.events.GameObjectDespawned;
-import net.runelite.api.events.ConfigButtonClicked;
-import net.runelite.api.events.NpcDefinitionChanged;
-import net.runelite.api.events.MenuOptionClicked;
-import net.runelite.api.widgets.Widget;
-import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
-import net.runelite.client.plugins.Plugin;
-import net.runelite.client.plugins.PluginDependency;
-import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.plugins.PluginManager;
-import net.runelite.client.plugins.PluginType;
-import net.runelite.client.plugins.botutils.BotUtils;
-import net.runelite.client.ui.overlay.OverlayManager;
-import org.pf4j.Extension;
+
+import static net.runelite.client.plugins.botutils.Banks.BANK_SET;
 
 @Extension
 @PluginDescriptor(
-	name = "Glass Blower",
+	name = "El Glass Blower",
 	description = "Blows your glass",
 	type = PluginType.SKILLING
 )
@@ -119,6 +75,7 @@ public class glassblowerPlugin extends Plugin
 	int tickTimer;
 	int clientTickTimer;
 	MenuEntry targetMenu;
+	boolean startGlassBlower;
 
 	int objectToBlowId;
 	String objectToBlowName = "";
@@ -156,7 +113,6 @@ public class glassblowerPlugin extends Plugin
 		botTimer = Instant.now();
 		tickTimer=0;
 		clientTickTimer=0;
-		overlayManager.add(overlay);
 		updateObjectToBlowId();
 		firstTime=true;
 		outputStatus="";
@@ -164,6 +120,7 @@ public class glassblowerPlugin extends Plugin
 		currentAmountGlass=0;
 		loadDelayValues();
 		log.info("Plugin started");
+		startGlassBlower=false;
 	}
 
 	@Override
@@ -172,6 +129,39 @@ public class glassblowerPlugin extends Plugin
 		// runs on plugin shutdown
 		overlayManager.remove(overlay);
 		log.info("Plugin stopped");
+		startGlassBlower=false;
+	}
+
+	@Subscribe
+	private void onConfigButtonPressed(ConfigButtonClicked configButtonClicked)
+	{
+		if (!configButtonClicked.getGroup().equalsIgnoreCase("glassblowerConfig"))
+		{
+			return;
+		}
+		log.info("button {} pressed!", configButtonClicked.getKey());
+		if (configButtonClicked.getKey().equals("startButton"))
+		{
+			if (!startGlassBlower)
+			{
+				startGlassBlower = true;
+				targetMenu = null;
+				botTimer = Instant.now();
+				overlayManager.add(overlay);
+			} else {
+				shutDown();
+			}
+		}
+	}
+
+	@Subscribe
+	private void onConfigChanged(ConfigChanged event)
+	{
+		if (!event.getGroup().equals("glassblowerConfig"))
+		{
+			return;
+		}
+		startGlassBlower = false;
 	}
 
 	@Subscribe
@@ -222,6 +212,17 @@ public class glassblowerPlugin extends Plugin
 	@Subscribe
 	private void onGameTick(GameTick gameTick)
 	{
+		if (!startGlassBlower)
+		{
+			return;
+		}
+		if (!client.isResized())
+		{
+			utils.sendGameMessage("client must be set to resizable");
+			startGlassBlower = false;
+			return;
+		}
+
 		objectToBlowName=itemManager.getItemDefinition(objectToBlowId).getName();
 		status = getStatus();
 		if(!status.equals("TICK_TIMER")){

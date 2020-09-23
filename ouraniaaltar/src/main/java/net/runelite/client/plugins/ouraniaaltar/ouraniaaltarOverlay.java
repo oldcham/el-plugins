@@ -47,6 +47,12 @@ class ouraniaaltarOverlay extends OverlayPanel
     @Override
     public Dimension render(Graphics2D graphics)
     {
+        if (plugin.botTimer == null || !plugin.startOuraniaAltar || !config.enableUI())
+        {
+            log.debug("Overlay conditions not met, not starting overlay");
+            return null;
+        }
+
         TableComponent tableComponent = new TableComponent();
         tableComponent.setColumnAlignments(TableAlignment.LEFT, TableAlignment.RIGHT);
         Duration duration = Duration.between(plugin.botTimer, Instant.now());
@@ -55,9 +61,6 @@ class ouraniaaltarOverlay extends OverlayPanel
         tableComponent.addRow("Status:", plugin.status);
         tableComponent.addRow("Progress: ", String.valueOf(plugin.runecraftProgress));
         tableComponent.addRow("Essence: ", plugin.currentEss + " (-" + (plugin.startEss - plugin.currentEss) + ")");
-        tableComponent.addRow("Delay: ", String.valueOf(plugin.tickTimer));
-        tableComponent.addRow("craftingTimer: ", String.valueOf(plugin.craftingTimer));
-        tableComponent.addRow("DROP_RUNE_IDS: ", plugin.DROP_RUNE_IDS.toString());
 
 
         if (!tableComponent.isEmpty())
@@ -66,7 +69,7 @@ class ouraniaaltarOverlay extends OverlayPanel
             panelComponent.setPreferredSize(new Dimension(200, 200));
             panelComponent.setBorder(new Rectangle(5, 5, 5, 5));
             panelComponent.getChildren().add(TitleComponent.builder()
-                    .text("El Ourania")
+                    .text("El ZMI")
                     .color(ColorUtil.fromHex("#40C4FF"))
                     .build());
             panelComponent.getChildren().add(TitleComponent.builder()
@@ -75,7 +78,7 @@ class ouraniaaltarOverlay extends OverlayPanel
                     .build());
             panelComponent.getChildren().add(tableComponent);
             panelComponent.getChildren().add(TitleComponent.builder()
-                    .text("WIP DONT HATE")
+                    .text("WIP")
                     .color(ColorUtil.fromHex("#40C4FF"))
                     .build());
         }

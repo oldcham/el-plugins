@@ -47,6 +47,12 @@ class superglassmakerOverlay extends OverlayPanel
     @Override
     public Dimension render(Graphics2D graphics)
     {
+        if (plugin.botTimer == null || !plugin.startSuperglassMaker || !config.enableUI())
+        {
+            log.debug("Overlay conditions not met, not starting overlay");
+            return null;
+        }
+
         TableComponent tableComponent = new TableComponent();
         tableComponent.setColumnAlignments(TableAlignment.LEFT, TableAlignment.RIGHT);
         Duration duration = Duration.between(plugin.botTimer, Instant.now());
@@ -64,7 +70,7 @@ class superglassmakerOverlay extends OverlayPanel
             panelComponent.setPreferredSize(new Dimension(200, 200));
             panelComponent.setBorder(new Rectangle(5, 5, 5, 5));
             panelComponent.getChildren().add(TitleComponent.builder()
-                    .text("Superglass Maker")
+                    .text("El Superglass")
                     .color(ColorUtil.fromHex("#40C4FF"))
                     .build());
             panelComponent.getChildren().add(tableComponent);

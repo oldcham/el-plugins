@@ -41,7 +41,7 @@ import java.util.Set;
 
 @Extension
 @PluginDescriptor(
-	name = "Fire Maker",
+	name = "El Fire Maker",
 	description = "Makes fires for you",
 	type = PluginType.MISCELLANEOUS
 )
@@ -75,6 +75,7 @@ public class firemakerPlugin extends Plugin
 	Player player;
 	boolean firstTime;
 	String state;
+	boolean startFireMaker;
 
 	int timeout = 0;
 	long sleepLength;
@@ -110,12 +111,12 @@ public class firemakerPlugin extends Plugin
 		// runs on plugin startup
 		log.info("Plugin started");
 		botTimer = Instant.now();
-		overlayManager.add(overlay);
 		walkAction=false;
 		coordX=0;
 		coordY=0;
 		firstTime=true;
 		northPath=true;
+		startFireMaker=false;
 
 
 		// example how to use config items
@@ -127,6 +128,7 @@ public class firemakerPlugin extends Plugin
 		// runs on plugin shutdown
 		log.info("Plugin stopped");
 		overlayManager.remove(overlay);
+		startFireMaker=false;
 	}
 
 	private long sleepDelay()
@@ -140,9 +142,50 @@ public class firemakerPlugin extends Plugin
 	}
 
 	@Subscribe
+	private void onConfigButtonPressed(ConfigButtonClicked configButtonClicked)
+	{
+		if (!configButtonClicked.getGroup().equalsIgnoreCase("firemakerConfig"))
+		{
+			return;
+		}
+		log.info("button {} pressed!", configButtonClicked.getKey());
+		if (configButtonClicked.getKey().equals("startButton"))
+		{
+			if (!startFireMaker)
+			{
+				startFireMaker = true;
+				targetMenu = null;
+				botTimer = Instant.now();
+				overlayManager.add(overlay);
+			} else {
+				shutDown();
+			}
+		}
+	}
+
+	@Subscribe
+	private void onConfigChanged(ConfigChanged event)
+	{
+		if (!event.getGroup().equals("firemakerConfig"))
+		{
+			return;
+		}
+		startFireMaker = false;
+	}
+
+	@Subscribe
 	private void onGameTick(GameTick gameTick)
 	{
-
+		if (!startFireMaker)
+		{
+			return;
+		}
+		if (!client.isResized())
+		{
+			utils.sendGameMessage("client must be set to resizable");
+			startFireMaker = false;
+			return;
+		}
 		player = client.getLocalPlayer();
 		if(player==null){
 			state = "null player";

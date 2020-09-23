@@ -24,6 +24,7 @@
  */
 package net.runelite.client.plugins.ouraniaaltar;
 
+import net.runelite.client.config.Button;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -33,10 +34,23 @@ import net.runelite.client.config.ConfigItem;
 public interface ouraniaaltarConfig extends Config
 {
 	@ConfigItem(
+			keyName = "instructions",
+			name = "",
+			description = "Instructions. Don't enter anything into this field",
+			position = 0,
+			titleSection = "instructionsTitle"
+	)
+	default String instructions()
+	{
+		return "Make sure you have Stamina (1)s, Karambwans, Essence, Air Runes and Cosmic Runes in your bank. " +
+				"Equip a staff that gives earth runes and make sure you have ourania teleport and banking runes in your pouch.";
+	}
+
+	@ConfigItem(
 			keyName = "giantPouch",
 			name = "Use Giant Pouch",
 			description = "Use giant pouch",
-			position = 0
+			position = 1
 	)
 	default boolean giantPouch() { return false; }
 
@@ -44,7 +58,7 @@ public interface ouraniaaltarConfig extends Config
 			keyName = "daeyalt",
 			name = "Use Daeyalt Essence",
 			description = "Use daeyalt essence",
-			position = 1
+			position = 2
 	)
 	default boolean daeyalt() { return false; }
 
@@ -52,7 +66,7 @@ public interface ouraniaaltarConfig extends Config
 			keyName = "dropRunes",
 			name = "Drop Runes",
 			description = "Drop runes at altar",
-			position = 2
+			position = 3
 	)
 	default boolean dropRunes() { return false; }
 
@@ -81,4 +95,26 @@ public interface ouraniaaltarConfig extends Config
 			position = 14
 	)
 	default int minHealth() { return 65; }
+
+	@ConfigItem(
+			keyName = "enableUI",
+			name = "Enable UI",
+			description = "Enable to turn on in game UI",
+			position = 140
+	)
+	default boolean enableUI()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "startButton",
+			name = "Start/Stop",
+			description = "Test button that changes variable value",
+			position = 150
+	)
+	default Button startButton()
+	{
+		return new Button();
+	}
 }
