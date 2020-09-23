@@ -76,7 +76,8 @@ public class firemakerPlugin extends Plugin
 	boolean firstTime;
 	String state;
 	boolean startFireMaker;
-
+	GameObject gameObject;
+	WorldPoint startTile;
 	int timeout = 0;
 	long sleepLength;
 	boolean walkAction;
@@ -210,7 +211,6 @@ public class firemakerPlugin extends Plugin
 			} else if(!config.justLaws() && utils.getInventorySpace()==25) {
 				openNearestBank();
 				state = "opening nearest bank";
-				northPath = !northPath;
 				timeout = 6 + tickDelay();
 				return;
 			}
@@ -222,28 +222,19 @@ public class firemakerPlugin extends Plugin
 			timeout=tickDelay();
 			return;
 		}
-		if(northPath) {
-			if (!utils.isBankOpen() && utils.inventoryFull() && !player.getWorldArea().intersectsWith(varrockFountainArea)) {
-				WorldPoint startTile = new WorldPoint(3209 + utils.getRandomIntBetweenRange(0,4), 3429, 0);
-				LocalPoint startTileLocal = LocalPoint.fromWorld(client, startTile);
-				if (startTileLocal != null) {
-					walk(startTileLocal, 0, sleepDelay());
-				}
-				timeout = 2 + tickDelay();
-				state = "walking to start tile";
-				return;
+		if (!utils.isBankOpen() && utils.inventoryFull() && !player.getWorldArea().intersectsWith(varrockFountainArea)) {
+			checkFreePath();
+			if(northPath) {
+				startTile = new WorldPoint(3209 + utils.getRandomIntBetweenRange(0, 4), 3429, 0);
+			} else {
+				startTile = new WorldPoint(3209 + utils.getRandomIntBetweenRange(0,4), 3428, 0);
 			}
-		} else {
-			if (!utils.isBankOpen() && utils.inventoryFull() && !player.getWorldArea().intersectsWith(varrockFountainArea)) {
-				WorldPoint startTile = new WorldPoint(3209 + utils.getRandomIntBetweenRange(0,4), 3428, 0);
-				LocalPoint startTileLocal = LocalPoint.fromWorld(client, startTile);
-				if (startTileLocal != null) {
-					walk(startTileLocal, 0, sleepDelay());
-				}
-				timeout = 2 + tickDelay();
-				state = "walking to start tile";
-				return;
+			if (LocalPoint.fromWorld(client,startTile) != null) {
+				walk(LocalPoint.fromWorld(client,startTile), 0, sleepDelay());
 			}
+			timeout = 2 + tickDelay();
+			state = "walking to start tile";
+			return;
 		}
 		if(!utils.isBankOpen()){
 			if(firstTime){
@@ -346,5 +337,18 @@ public class firemakerPlugin extends Plugin
 		rsClient.setSelectedSceneTileY(y);
 		rsClient.setViewportWalking(true);
 		rsClient.setCheckClick(false);
+	}
+
+	private void checkFreePath(){
+		gameObject = utils.findNearestGameObject(26185);
+		if(gameObject!=null){
+			if(gameObject.getWorldLocation().getY()==3429){
+				northPath=false;
+			} else {
+				northPath=true;
+			}
+		} else {
+			northPath=true;
+		}
 	}
 }
