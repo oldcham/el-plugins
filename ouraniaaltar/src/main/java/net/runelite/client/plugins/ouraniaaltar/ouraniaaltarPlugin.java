@@ -222,7 +222,7 @@ public class ouraniaaltarPlugin extends Plugin
 			case "TICK_TIMER":
 				break;
 			case "MOVING":
-				tickTimer=0;
+				tickTimer=tickDelay();
 				if(config.noStams()){
 					shouldRun();
 				}
@@ -643,7 +643,8 @@ public class ouraniaaltarPlugin extends Plugin
 	{
 		if(client.getWidget(160,23)!=null){ //if run widget is visible
 			if(Integer.parseInt(client.getWidget(160,23).getText())>(30+utils.getRandomIntBetweenRange(0,20))){ //if run > 30+~20
-				if(client.getVarbitValue(173)==0){ //if run is off
+				log.info(String.valueOf(client.getVarbitValue(173)));
+				if(client.getWidget(160,27).getSpriteId()==1069){ //if run is off
 					targetMenu = new MenuEntry("Toggle Run","",1,57,-1,10485782,false);
 					utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
 					return;
