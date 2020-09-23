@@ -247,7 +247,7 @@ public class bloodrunecrafterPlugin extends Plugin
 				targetMenu = new MenuEntry("Use", "Use", 1755, 38,
 						utils.getInventoryWidgetItem(1755).getIndex(), 9764864, false);
 				utils.setMenuEntry(targetMenu);
-				utils.delayMouseClick(targetGroundObject.getConvexHull().getBounds(), 0);
+				utils.delayMouseClick(utils.getInventoryWidgetItem(1755).getCanvasBounds(), 0);
 			}
 			utils.inventoryItemsCombine(Collections.singleton(13446), 1755,38, false,true, config.sleepMin(), config.sleepMax());
 		}
