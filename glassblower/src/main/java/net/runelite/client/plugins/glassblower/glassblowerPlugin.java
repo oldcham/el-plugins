@@ -22,9 +22,6 @@ import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.http.api.ge.GrandExchangeClient;
-import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
-import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
 import net.runelite.client.plugins.botutils.BotUtils;
 import java.awt.event.KeyEvent;
@@ -56,17 +53,10 @@ public class glassblowerPlugin extends Plugin
 	private BotUtils utils;
 
 	@Inject
-	private GrandExchangeClient grandExchangeClient;
-
-	@Inject
-	private OSBGrandExchangeClient osbGrandExchangeClient;
-
-	@Inject
 	OverlayManager overlayManager;
 
 	@Inject
 	private ItemManager itemManager;
-
 
 	@Inject
 	private glassblowerOverlay overlay;
@@ -94,18 +84,6 @@ public class glassblowerPlugin extends Plugin
 	glassblowerConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(glassblowerConfig.class);
-	}
-
-	@Provides
-	OSBGrandExchangeClient provideOsbGrandExchangeClient(OkHttpClient okHttpClient)
-	{
-		return new OSBGrandExchangeClient(okHttpClient);
-	}
-
-	@Provides
-	GrandExchangeClient provideGrandExchangeClient(OkHttpClient okHttpClient)
-	{
-		return new GrandExchangeClient(okHttpClient);
 	}
 
 	@Override

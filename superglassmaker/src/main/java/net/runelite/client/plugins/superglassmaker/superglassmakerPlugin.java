@@ -17,23 +17,11 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
-import net.runelite.client.plugins.botutils.Runes;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.http.api.ge.GrandExchangeClient;
-import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
-import net.runelite.rs.api.RSMenuAction;
-import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
 import net.runelite.client.plugins.botutils.BotUtils;
-
 import java.awt.*;
 import java.time.Instant;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Extension
 @PluginDependency(BotUtils.class)
@@ -54,12 +42,6 @@ public class superglassmakerPlugin extends Plugin
 
 	@Inject
 	private BotUtils utils;
-
-	@Inject
-	private GrandExchangeClient grandExchangeClient;
-
-	@Inject
-	private OSBGrandExchangeClient osbGrandExchangeClient;
 
 	@Inject
 	OverlayManager overlayManager;
@@ -90,18 +72,6 @@ public class superglassmakerPlugin extends Plugin
 	superglassmakerConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(superglassmakerConfig.class);
-	}
-
-	@Provides
-	OSBGrandExchangeClient provideOsbGrandExchangeClient(OkHttpClient okHttpClient)
-	{
-		return new OSBGrandExchangeClient(okHttpClient);
-	}
-
-	@Provides
-	GrandExchangeClient provideGrandExchangeClient(OkHttpClient okHttpClient)
-	{
-		return new GrandExchangeClient(okHttpClient);
 	}
 
 	@Override

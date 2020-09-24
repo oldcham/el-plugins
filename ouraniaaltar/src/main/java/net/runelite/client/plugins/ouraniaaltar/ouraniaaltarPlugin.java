@@ -16,9 +16,6 @@ import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.http.api.ge.GrandExchangeClient;
-import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
-import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
 import net.runelite.client.plugins.botutils.BotUtils;
 import java.awt.*;
@@ -86,18 +83,6 @@ public class ouraniaaltarPlugin extends Plugin
 	ouraniaaltarConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(ouraniaaltarConfig.class);
-	}
-
-	@Provides
-	OSBGrandExchangeClient provideOsbGrandExchangeClient(OkHttpClient okHttpClient)
-	{
-		return new OSBGrandExchangeClient(okHttpClient);
-	}
-
-	@Provides
-	GrandExchangeClient provideGrandExchangeClient(OkHttpClient okHttpClient)
-	{
-		return new GrandExchangeClient(okHttpClient);
 	}
 
 	@Override

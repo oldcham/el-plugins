@@ -9,12 +9,9 @@ import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ConfigButtonClicked;
-import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.queries.GameObjectQuery;
-import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -25,20 +22,10 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.plugins.botutils.BotUtils;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.http.api.ge.GrandExchangeClient;
-import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
 import net.runelite.rs.api.RSClient;
-import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
-
-import static net.runelite.client.plugins.botutils.Banks.ALL_BANKS;
-import static net.runelite.client.plugins.botutils.Banks.BANK_SET;
-
 import java.awt.*;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 @Extension
 @PluginDependency(BotUtils.class)
@@ -94,18 +81,6 @@ public class firemakerPlugin extends Plugin
 	firemakerConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(firemakerConfig.class);
-	}
-
-	@Provides
-	OSBGrandExchangeClient provideOsbGrandExchangeClient(OkHttpClient okHttpClient)
-	{
-		return new OSBGrandExchangeClient(okHttpClient);
-	}
-
-	@Provides
-	GrandExchangeClient provideGrandExchangeClient(OkHttpClient okHttpClient)
-	{
-		return new GrandExchangeClient(okHttpClient);
 	}
 
 	@Override
