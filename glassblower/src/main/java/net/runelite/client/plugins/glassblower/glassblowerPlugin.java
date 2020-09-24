@@ -25,14 +25,14 @@ import net.runelite.http.api.ge.GrandExchangeClient;
 import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
 import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
-import net.runelite.client.plugins.botutils.BotUtils;
+import net.runelite.client.plugins.elutils.elutils;
 import java.awt.event.KeyEvent;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.awt.Rectangle;
 
-import static net.runelite.client.plugins.botutils.Banks.BANK_SET;
+import static net.runelite.client.plugins.elutils.Banks.BANK_SET;
 
 @Extension
 @PluginDescriptor(
@@ -51,7 +51,7 @@ public class glassblowerPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	private BotUtils utils;
+	private elutils utils;
 
 	@Inject
 	private GrandExchangeClient grandExchangeClient;

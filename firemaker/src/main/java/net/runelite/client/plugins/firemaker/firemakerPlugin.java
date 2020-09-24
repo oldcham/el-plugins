@@ -22,7 +22,7 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
-import net.runelite.client.plugins.botutils.BotUtils;
+import net.runelite.client.plugins.elutils.elutils;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.http.api.ge.GrandExchangeClient;
 import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
@@ -30,8 +30,8 @@ import net.runelite.rs.api.RSClient;
 import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
 
-import static net.runelite.client.plugins.botutils.Banks.ALL_BANKS;
-import static net.runelite.client.plugins.botutils.Banks.BANK_SET;
+import static net.runelite.client.plugins.elutils.Banks.ALL_BANKS;
+import static net.runelite.client.plugins.elutils.Banks.BANK_SET;
 
 import java.awt.*;
 import java.time.Instant;
@@ -53,7 +53,7 @@ public class firemakerPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	private BotUtils utils;
+	private elutils utils;
 
 	@Inject
 	private ConfigManager configManager;

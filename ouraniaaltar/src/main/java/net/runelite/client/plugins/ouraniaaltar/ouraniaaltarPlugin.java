@@ -19,7 +19,7 @@ import net.runelite.http.api.ge.GrandExchangeClient;
 import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
 import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
-import net.runelite.client.plugins.botutils.BotUtils;
+import net.runelite.client.plugins.elutils.elutils;
 import java.awt.*;
 import java.time.Instant;
 import java.util.*;
@@ -37,7 +37,7 @@ public class ouraniaaltarPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	private BotUtils utils;
+	private elutils utils;
 
 	@Inject
 	private ConfigManager configManager;
