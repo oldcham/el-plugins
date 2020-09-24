@@ -30,6 +30,7 @@ include(":glassblower")
 include(":ouraniaaltar")
 include(":firemaker")
 include(":bloodrunecrafter")
+include(":sandstoneminer")
 
 for (project in rootProject.children) {
     project.apply {

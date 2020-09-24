@@ -183,11 +183,6 @@ public class bloodrunecrafterPlugin extends Plugin
 		startBloodRunecrafter = false;
 	}
 
-	@Subscribe
-	private void onMenuOptionClicked(MenuOptionClicked e){
-		log.info(e.toString());
-	}
-
 	public void setLocation()
 	{
 		if (client != null && client.getLocalPlayer() != null && client.getGameState().equals(GameState.LOGGED_IN))
@@ -499,7 +494,6 @@ public class bloodrunecrafterPlugin extends Plugin
 	private bloodrunecrafterState getBloodRunecraftState()
 	{
 		if(utils.inventoryFull()){
-			log.info("invent full");
 			if(utils.inventoryContains(13445)) { //mined blocks
 				if (player.getWorldArea().intersectsWith(DENSE_ESSENCE_AREA)) { //dense essence area
 					return BLOOD_OBSTACLE_1;

@@ -59,7 +59,6 @@ public class ouraniaaltarPlugin extends Plugin
 	//plugin data
 	MenuEntry targetMenu;
 	int clientTickBreak = 0;
-	int withdrawClickCount = 0;
 	int tickTimer;
 	boolean startOuraniaAltar;
 	String status = "UNKNOWN";
