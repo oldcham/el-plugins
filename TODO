@@ -1,3 +1,33 @@
-Add sleep delays to firemaker plugin
-chin break handler for bloodrunecrafter
-add setup for ourania altar including abyssal book, right click npc contact
+FIREMAKER:
+Add sleep delays to config
+Add varrock teleport tablets
+Add option to walk to varrock square
+
+
+BLOODRUNECRAFTER:
+Add chin break handler support for runecrafter
+Add better walking to the plugin for altars
+Add better checks for missing inventory spaces etc
+
+ZMI:
+Add a setup guide, including abyssal book, npc contact, bank setup
+
+SUPERGLASS:
+Add deposit glass instead of deposit inventory
+Add a setup guide including withdraw-x option to 18
+
+
+
+
+
+
+
+FUTURE PLUGINS:
+-a bow fletcher
+-a potion maker
+-a herb cleaner
+-birdhouse (maybe)
+-plank maker in house
+-plank maker with spell
+-herb cleaner(C17)
+-Combo runecrafter w/ imbue and pouches
