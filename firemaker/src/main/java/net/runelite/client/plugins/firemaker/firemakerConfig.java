@@ -62,10 +62,18 @@ public interface firemakerConfig extends Config
 	default boolean justLaws() { return false; }
 
 	@ConfigItem(
+			keyName = "walk",
+			name = "Walk",
+			description = "Walks instead of teleporting",
+			position = 3
+	)
+	default boolean walk() { return false; }
+
+	@ConfigItem(
 			keyName = "customTickDelays",
 			name = "Custom Tick Delays",
 			description = "Set custom tick delays",
-			position = 3
+			position = 4
 	)
 	default boolean customTickDelays() { return false; }
 
@@ -73,7 +81,7 @@ public interface firemakerConfig extends Config
 			keyName = "tickDelayMin",
 			name = "Tick Delay Minimum",
 			description = "Tick delay minimum.",
-			position = 4,
+			position = 5,
 			hidden = true,
 			unhide = "customTickDelays"
 	)
@@ -83,7 +91,7 @@ public interface firemakerConfig extends Config
 			keyName = "tickDelayMax",
 			name = "Tick Delay Maximum",
 			description = "Tick delay maximum.",
-			position = 5,
+			position = 6,
 			hidden = true,
 			unhide = "customTickDelays"
 	)
@@ -93,7 +101,7 @@ public interface firemakerConfig extends Config
 			keyName = "tickDelayDev",
 			name = "Tick Delay Deviation",
 			description = "Tick delay deviation.",
-			position = 6,
+			position = 7,
 			hidden = true,
 			unhide = "customTickDelays"
 	)
@@ -103,7 +111,7 @@ public interface firemakerConfig extends Config
 			keyName = "tickDelayTarg",
 			name = "Tick Delay Target",
 			description = "Tick delay target.",
-			position = 7,
+			position = 8,
 			hidden = true,
 			unhide = "customTickDelays"
 	)

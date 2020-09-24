@@ -26,6 +26,11 @@ import net.runelite.rs.api.RSClient;
 import org.pf4j.Extension;
 import java.awt.*;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Extension
 @PluginDependency(BotUtils.class)
@@ -68,13 +73,15 @@ public class firemakerPlugin extends Plugin
 	GameObject gameObject;
 	WorldPoint startTile;
 	int timeout = 0;
-	long sleepLength;
 	boolean walkAction;
-	WorldArea varrockFountainArea = new WorldArea(new WorldPoint(3209,3428,0), new WorldPoint(3214,3430,0));
+	WorldArea varrockFountainArea = new WorldArea(new WorldPoint(3205,3428,0), new WorldPoint(3214,3432,0));
 	int coordX;
 	int coordY;
-	boolean northPath;
+	int firemakingPath;
 	GameObject targetObject;
+	final Set<GameObject> fireObjects = new HashSet<>();
+	final Set<Integer> requiredItems = new HashSet<>();
+	boolean[] pathStates;
 
 	// Provides our config
 	@Provides
@@ -93,9 +100,17 @@ public class firemakerPlugin extends Plugin
 		coordX=0;
 		coordY=0;
 		firstTime=true;
-		northPath=true;
+		firemakingPath = 1;
 		startFireMaker=false;
-
+		requiredItems.clear();
+		requiredItems.add(590);
+		if(!config.walk()){
+			requiredItems.add(563);
+			if(!config.justLaws()){
+				requiredItems.add(554);
+			}
+		}
+		pathStates = null;
 
 		// example how to use config items
 	}
@@ -107,6 +122,9 @@ public class firemakerPlugin extends Plugin
 		log.info("Plugin stopped");
 		overlayManager.remove(overlay);
 		startFireMaker=false;
+		fireObjects.clear();
+		pathStates = null;
+		requiredItems.clear();
 	}
 
 	private long sleepDelay()
@@ -131,6 +149,7 @@ public class firemakerPlugin extends Plugin
 		{
 			if (!startFireMaker)
 			{
+				startUp();
 				startFireMaker = true;
 				targetMenu = null;
 				botTimer = Instant.now();
@@ -174,37 +193,38 @@ public class firemakerPlugin extends Plugin
 			timeout=tickDelay();
 			return;
 		}
+		if(utils.isMoving()){
+			return;
+		}
 		if(timeout>0){
+			utils.handleRun(30, 20);
 			timeout--;
 			return;
 		}
-		if(!utils.isBankOpen()){
-			if(config.justLaws() && utils.getInventorySpace()==26){
+
+		if(!utils.isBankOpen()) {
+			if (utils.getInventorySpace() == 28 - requiredItems.size()) {
 				openNearestBank();
 				state = "opening nearest bank";
-				northPath=!northPath;
-				timeout=4+tickDelay();
-				return;
-			} else if(!config.justLaws() && utils.getInventorySpace()==25) {
-				openNearestBank();
-				state = "opening nearest bank";
-				timeout = 6 + tickDelay();
+				timeout = 4 + tickDelay();
 				return;
 			}
 		}
 		//26185 fire id
 		if(!utils.isBankOpen() && utils.inventoryFull() && player.getWorldLocation().equals(new WorldPoint(3185, 3436, 0))){
-			teleportToVarrock();
-			state = "teleporting to varrock";
+			getToVarrockSquare();
+			state = "getting to varrock sq";
 			timeout=tickDelay();
 			return;
 		}
 		if (!utils.isBankOpen() && utils.inventoryFull() && !player.getWorldArea().intersectsWith(varrockFountainArea)) {
 			checkFreePath();
-			if(northPath) {
-				startTile = new WorldPoint(3209 + utils.getRandomIntBetweenRange(0, 4), 3429, 0);
+			if(firemakingPath==0) {
+				startTile = new WorldPoint(3206 + utils.getRandomIntBetweenRange(0, 3), 3430, 0);
+			} else if(firemakingPath==1){
+				startTile = new WorldPoint(3206 + utils.getRandomIntBetweenRange(0,7), 3429, 0);
 			} else {
-				startTile = new WorldPoint(3209 + utils.getRandomIntBetweenRange(0,4), 3428, 0);
+				startTile = new WorldPoint(3206 + utils.getRandomIntBetweenRange(0,7), 3428, 0);
 			}
 			if (LocalPoint.fromWorld(client,startTile) != null) {
 				walk(LocalPoint.fromWorld(client,startTile), 0, sleepDelay());
@@ -287,9 +307,16 @@ public class firemakerPlugin extends Plugin
 		utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
 	}
 
-	private void teleportToVarrock(){
-		targetMenu=new MenuEntry("Cast","<col=00ff00>Varrock Teleport</col>",1,57,-1,14286868,false);
-		utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
+	private void getToVarrockSquare(){
+		if(!config.walk()){
+			targetMenu=new MenuEntry("Cast","<col=00ff00>Varrock Teleport</col>",1,57,-1,14286868,false);
+			utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
+		} else {
+			startTile = new WorldPoint(3196,3430,0);
+			if (LocalPoint.fromWorld(client,startTile) != null) {
+				walk(LocalPoint.fromWorld(client,startTile), 0, sleepDelay());
+			}
+		}
 	}
 
 	private void withdrawLogs(){
@@ -317,15 +344,44 @@ public class firemakerPlugin extends Plugin
 	}
 
 	private void checkFreePath(){
-		gameObject = utils.findNearestGameObject(26185);
-		if(gameObject!=null){
-			if(gameObject.getWorldLocation().getY()==3429){
-				northPath=false;
-			} else {
-				northPath=true;
+		pathStates = new boolean[]{false, false, false};
+		fireObjects.clear();
+		fireObjects.addAll(getLocalGameObjects(15,26185));
+		for(GameObject fire : fireObjects){
+			if(fire.getWorldLocation()!=null){
+				if(fire.getWorldLocation().getY()==3430){
+					pathStates[0]= true;
+				} else if(fire.getWorldLocation().getY()==3429){
+					pathStates[1]= true;
+				} else if(fire.getWorldLocation().getY()==3428){
+					pathStates[2]= true;
+				}
 			}
-		} else {
-			northPath=true;
 		}
+		log.debug(Arrays.toString(pathStates));
+		if(!pathStates[0]){
+			firemakingPath=0;
+		} else if (!pathStates[1]){
+			firemakingPath=1;
+		} else if (!pathStates[2]){
+			firemakingPath=2;
+		}
+		log.debug(String.valueOf(firemakingPath));
+		pathStates=null;
+	}
+
+	private java.util.List<GameObject> getLocalGameObjects(int distanceAway, int... ids)
+	{
+		if (client.getLocalPlayer() == null)
+		{
+			return new ArrayList<>();
+		}
+		List<GameObject> localGameObjects = new ArrayList<>();
+		for(GameObject gameObject : utils.getGameObjects(ids)){
+			if(gameObject.getWorldLocation().distanceTo2D(client.getLocalPlayer().getWorldLocation())<distanceAway){
+				localGameObjects.add(gameObject);
+			}
+		}
+		return localGameObjects;
 	}
 }
