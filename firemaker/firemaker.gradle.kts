@@ -23,14 +23,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "1.0.4"
+version = "1.1.0"
 
 project.extra["PluginName"] = "El Fire Maker" // This is the name that is used in the external plugin manager panel
 project.extra["PluginDescription"] = "Makes fires for you." // This is the description that is used in the external plugin manager panel
 
 
 dependencies {
-    compileOnly(project(":elutils"))
+    compileOnly(group = "com.openosrs.externals", name = "botutils", version = "4.5.0");
 }
 
 tasks {
@@ -42,7 +42,7 @@ tasks {
                     "Plugin-Provider" to project.extra["PluginProvider"],
                     "Plugin-Dependencies" to
                             arrayOf(
-                                    nameToId("elutils")
+                                    "botutils-plugin"
                             ).joinToString(),
                     "Plugin-Description" to project.extra["PluginDescription"],
                     "Plugin-License" to project.extra["PluginLicense"]

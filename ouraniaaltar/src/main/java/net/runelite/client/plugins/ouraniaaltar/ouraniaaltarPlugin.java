@@ -12,6 +12,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
+import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -19,12 +20,14 @@ import net.runelite.http.api.ge.GrandExchangeClient;
 import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
 import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
-import net.runelite.client.plugins.elutils.elutils;
+import net.runelite.client.plugins.botutils.BotUtils;
 import java.awt.*;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
+
 @Extension
+@PluginDependency(BotUtils.class)
 @PluginDescriptor(
 	name = "El ZMI",
 	description = "Crafts at ourania altar.",
@@ -37,7 +40,7 @@ public class ouraniaaltarPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	private elutils utils;
+	private BotUtils utils;
 
 	@Inject
 	private ConfigManager configManager;

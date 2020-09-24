@@ -18,6 +18,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
+import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -25,16 +26,17 @@ import net.runelite.http.api.ge.GrandExchangeClient;
 import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
 import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
-import net.runelite.client.plugins.elutils.elutils;
+import net.runelite.client.plugins.botutils.BotUtils;
 import java.awt.event.KeyEvent;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.awt.Rectangle;
 
-import static net.runelite.client.plugins.elutils.Banks.BANK_SET;
+import static net.runelite.client.plugins.botutils.Banks.BANK_SET;
 
 @Extension
+@PluginDependency(BotUtils.class)
 @PluginDescriptor(
 	name = "El Glass Blower",
 	description = "Blows your glass",
@@ -51,7 +53,7 @@ public class glassblowerPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	private elutils utils;
+	private BotUtils utils;
 
 	@Inject
 	private GrandExchangeClient grandExchangeClient;

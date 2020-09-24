@@ -12,6 +12,7 @@ import net.runelite.client.plugins.PluginType;
 import org.pf4j.Extension;
 
 @Extension
+@PluginDependency(BotUtils.class)
 @PluginDescriptor(
 	name = "Java example",
 	description = "Java example",

@@ -14,16 +14,17 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
+import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
-import net.runelite.client.plugins.elutils.Runes;
+import net.runelite.client.plugins.botutils.Runes;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.http.api.ge.GrandExchangeClient;
 import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
 import net.runelite.rs.api.RSMenuAction;
 import okhttp3.OkHttpClient;
 import org.pf4j.Extension;
-import net.runelite.client.plugins.elutils.elutils;
+import net.runelite.client.plugins.botutils.BotUtils;
 
 import java.awt.*;
 import java.time.Instant;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Extension
+@PluginDependency(BotUtils.class)
 @PluginDescriptor(
 	name = "El Superglass",
 	description = "Makes superglass.",
@@ -51,7 +53,7 @@ public class superglassmakerPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	private elutils utils;
+	private BotUtils utils;
 
 	@Inject
 	private GrandExchangeClient grandExchangeClient;

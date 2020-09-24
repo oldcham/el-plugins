@@ -30,7 +30,7 @@ project.extra["PluginDescription"] = "exampleDescription" // This is the descrip
 
 
 dependencies {
-    compileOnly(project(":elutils"))
+    compileOnly(group = "com.openosrs.externals", name = "botutils", version = "4.5.0+");
 }
 
 tasks {
@@ -42,7 +42,7 @@ tasks {
                     "Plugin-Provider" to project.extra["PluginProvider"],
                     "Plugin-Dependencies" to
                             arrayOf(
-                                    nameToId("elutils")
+                                    "botutils-plugin"
                             ).joinToString(),
                     "Plugin-Description" to project.extra["PluginDescription"],
                     "Plugin-License" to project.extra["PluginLicense"]

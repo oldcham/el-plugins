@@ -23,14 +23,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "1.2.3"
+version = "1.3.0"
 
 project.extra["PluginName"] = "El Glass Blower" // This is the name that is used in the external plugin manager panel
 project.extra["PluginDescription"] = "Blows your glass" // This is the description that is used in the external plugin manager panel
 
 
 dependencies {
-    compileOnly(project(":elutils"))
+    compileOnly(group = "com.openosrs.externals", name = "botutils", version = "4.5.0+");
 }
 
 tasks {
@@ -42,7 +42,7 @@ tasks {
                     "Plugin-Provider" to project.extra["PluginProvider"],
                     "Plugin-Dependencies" to
                             arrayOf(
-                                    nameToId("elutils")
+                                    "botutils-plugin"
                             ).joinToString(),
                     "Plugin-Description" to project.extra["PluginDescription"],
                     "Plugin-License" to project.extra["PluginLicense"]

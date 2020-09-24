@@ -52,6 +52,7 @@ subprojects {
             }
             filter {
                 includeGroupByRegex("com\\.openosrs.*")
+                includeGroupByRegex("com\\.openosrs.externals.botutils.*")
             }
         }
     }
