@@ -26,6 +26,7 @@
 package net.runelite.client.plugins.bloodrunecrafter;
 
 import com.google.inject.Provides;
+import com.owain.chinbreakhandler.ChinBreakHandler;
 import java.awt.Rectangle;
 import java.time.Instant;
 import java.util.*;
@@ -83,6 +84,9 @@ public class bloodrunecrafterPlugin extends Plugin
 	@Inject
 	private bloodrunecrafterOverlay overlay;
 
+	@Inject
+	private ChinBreakHandler chinBreakHandler;
+
 
 	bloodrunecrafterState state;
 	GameObject targetObject;
@@ -118,18 +122,20 @@ public class bloodrunecrafterPlugin extends Plugin
 	@Override
 	protected void startUp()
 	{
-		resetVals();
+		chinBreakHandler.registerPlugin(this);
 	}
 
 	@Override
 	protected void shutDown()
 	{
 		resetVals();
+		chinBreakHandler.unregisterPlugin(this);
 	}
 
 	private void resetVals()
 	{
 		overlayManager.remove(overlay);
+		chinBreakHandler.stopPlugin(this);
 		state = null;
 		timeout = 0;
 		botTimer = null;
@@ -153,6 +159,7 @@ public class bloodrunecrafterPlugin extends Plugin
 			if (!startBloodRunecrafter)
 			{
 				startBloodRunecrafter = true;
+				chinBreakHandler.startPlugin(this);
 				state = null;
 				targetMenu = null;
 				botTimer = Instant.now();
@@ -272,6 +279,10 @@ public class bloodrunecrafterPlugin extends Plugin
 			timeout = 2 + tickDelay();
 			return MOVING;
 		}
+		if (chinBreakHandler.shouldBreak(this) && player.getWorldArea().intersectsWith(DENSE_ESSENCE_AREA))
+		{
+			return HANDLE_BREAK;
+		}
 		if (utils.inventoryFull())
 		{
 			if(config.craftBloods()){
@@ -296,7 +307,7 @@ public class bloodrunecrafterPlugin extends Plugin
 	@Subscribe
 	private void onGameTick(GameTick tick)
 	{
-		if (!startBloodRunecrafter)
+		if (!startBloodRunecrafter || chinBreakHandler.isBreakActive(this))
 		{
 			return;
 		}
@@ -329,6 +340,10 @@ public class bloodrunecrafterPlugin extends Plugin
 					startBloodRunecrafter = false;
 					utils.sendGameMessage("Missing required items IDs: " + String.valueOf(requiredIds) + " from inventory. Stopping.");
 					resetVals();
+					break;
+				case HANDLE_BREAK:
+					chinBreakHandler.startBreak(this);
+					timeout = 10;
 					break;
 				case ANIMATING:
 				case MOVING:
@@ -385,7 +400,11 @@ public class bloodrunecrafterPlugin extends Plugin
 					targetMenu = new MenuEntry("Climb", "<col=ffff>Rocks", targetGroundObject.getId(), 3,
 							targetGroundObject.getLocalLocation().getSceneX(), targetGroundObject.getLocalLocation().getSceneY(), false);
 					utils.setMenuEntry(targetMenu);
-					utils.delayMouseClick(targetGroundObject.getConvexHull().getBounds(), sleepDelay());
+					if(targetGroundObject.getConvexHull()!=null){
+						utils.delayMouseClick(targetGroundObject.getConvexHull().getBounds(), sleepDelay());
+					} else {
+						utils.delayMouseClick(new Point(0,0), sleepDelay());
+					}
 				}
 				break;
 			case CLICK_DARK_ALTAR:
@@ -395,7 +414,11 @@ public class bloodrunecrafterPlugin extends Plugin
 					targetMenu = new MenuEntry("Venerate", "<col=ffff>Dark Altar", targetObject.getId(), 3,
 							targetObject.getSceneMinLocation().getX(), targetObject.getSceneMinLocation().getY(), false);
 					utils.setMenuEntry(targetMenu);
-					utils.delayMouseClick(targetObject.getConvexHull().getBounds(), sleepDelay());
+					if(targetObject.getConvexHull()!=null){
+						utils.delayMouseClick(targetObject.getConvexHull().getBounds(), sleepDelay());
+					} else {
+						utils.delayMouseClick(new Point(0,0), sleepDelay());
+					}
 				} else {
 					utils.walk(new WorldPoint(1718,3883,0),2,sleepDelay());
 				}
@@ -411,7 +434,11 @@ public class bloodrunecrafterPlugin extends Plugin
 						targetMenu = new MenuEntry("Bind", "<col=ffff>Blood Altar", targetObject.getId(), 3,
 								targetObject.getSceneMinLocation().getX(), targetObject.getSceneMinLocation().getY(), false);
 						utils.setMenuEntry(targetMenu);
-						utils.delayMouseClick(targetObject.getConvexHull().getBounds(), sleepDelay());
+						if(targetObject.getConvexHull()!=null){
+							utils.delayMouseClick(targetObject.getConvexHull().getBounds(), sleepDelay());
+						} else {
+							utils.delayMouseClick(new Point(0,0), sleepDelay());
+						}
 					}
 				}
 				break;
@@ -426,7 +453,12 @@ public class bloodrunecrafterPlugin extends Plugin
 					targetMenu = new MenuEntry("Bind", "<col=ffff>Blood Altar", targetObject.getId(), 3,
 							targetObject.getSceneMinLocation().getX(), targetObject.getSceneMinLocation().getY(), false);
 					utils.setMenuEntry(targetMenu);
-					utils.delayMouseClick(targetObject.getConvexHull().getBounds(), sleepDelay());
+					if(targetObject.getConvexHull()!=null){
+						utils.delayMouseClick(targetObject.getConvexHull().getBounds(), sleepDelay());
+					} else {
+						utils.delayMouseClick(new Point(0,0), sleepDelay());
+					}
+
 				}
 				break;
 			case BLOOD_OBSTACLE_2:

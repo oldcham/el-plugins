@@ -52,7 +52,7 @@ subprojects {
             }
             filter {
                 includeGroupByRegex("com\\.openosrs.*")
-                includeGroupByRegex("com\\.openosrs.externals.botutils.*")
+                includeGroupByRegex("com\\.owain.*")
             }
         }
     }
