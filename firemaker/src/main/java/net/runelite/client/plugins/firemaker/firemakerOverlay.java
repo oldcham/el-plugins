@@ -2,10 +2,8 @@ package net.runelite.client.plugins.firemaker;
 
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
-import net.runelite.client.ui.overlay.OverlayMenuEntry;
-import net.runelite.client.ui.overlay.OverlayPanel;
-import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.OverlayPriority;
+import net.runelite.api.GameObject;
+import net.runelite.client.ui.overlay.*;
 import net.runelite.client.ui.overlay.components.TitleComponent;
 import net.runelite.client.ui.overlay.components.table.TableAlignment;
 import net.runelite.client.ui.overlay.components.table.TableComponent;
@@ -60,11 +58,7 @@ class firemakerOverlay extends OverlayPanel
         timeFormat = (duration.toHours() < 1) ? "mm:ss" : "HH:mm:ss";
         tableComponent.addRow("Time:", formatDuration(duration.toMillis(), timeFormat));
         tableComponent.addRow("State:", plugin.state);
-        if(plugin.northPath){
-            tableComponent.addRow("Using: ", "North path");
-        } else {
-            tableComponent.addRow("Using: ", "South path");
-        }
+        tableComponent.addRow("Path: ", String.valueOf(plugin.firemakingPath));
 
 
         if (!tableComponent.isEmpty())
@@ -78,6 +72,17 @@ class firemakerOverlay extends OverlayPanel
                     .build());
             panelComponent.getChildren().add(tableComponent);
         }
+
+        renderFires(graphics);
         return super.render(graphics);
+    }
+
+    private void renderFires(Graphics2D graphics)
+    {
+        for(GameObject fire : plugin.fireObjects) {
+            if(fire.getCanvasTilePoly()!=null){
+                OverlayUtil.renderPolygon(graphics, fire.getCanvasTilePoly(), Color.RED);
+            }
+        }
     }
 }
