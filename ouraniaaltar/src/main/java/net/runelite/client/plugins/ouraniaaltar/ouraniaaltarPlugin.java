@@ -393,15 +393,15 @@ public class ouraniaaltarPlugin extends Plugin
 			}
 		}
 		if(checkHitpoints()<config.minHealth()){
-				if(utils.inventoryContains(config.foodId())){
-					targetMenu = new MenuEntry("Eat","<col=ff9040>"+itemManager.getItemDefinition(config.foodId()).getName()+"</col>",9,1007,utils.getInventoryWidgetItem(config.foodId()).getIndex(),983043,false);;
-					utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
-					return "EATING_FOOD";
-				} else {
-					targetMenu = new MenuEntry("Withdraw-1","Withdraw-1",1,57,utils.getBankItemWidget(config.foodId()).getIndex(),786444,false);
-					utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
-					return "WITHDRAW_FOOD";
-				}
+			if(utils.inventoryContains(config.foodId())){
+				targetMenu = new MenuEntry("Eat","<col=ff9040>"+itemManager.getItemDefinition(config.foodId()).getName()+"</col>",9,1007,utils.getInventoryWidgetItem(config.foodId()).getIndex(),983043,false);
+				utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
+				return "EATING_FOOD";
+			} else {
+				targetMenu = new MenuEntry("Withdraw-1","Withdraw-1",1,57,utils.getBankItemWidget(config.foodId()).getIndex(),786444,false);
+				utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
+				return "WITHDRAW_FOOD";
+			}
 		}
 		if(!config.giantPouch()){
 			if(runecraftProgress==0){
