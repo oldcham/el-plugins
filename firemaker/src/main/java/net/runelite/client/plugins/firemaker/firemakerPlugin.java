@@ -320,6 +320,7 @@ public class firemakerPlugin extends Plugin
 	private void getToVarrockSquare(){
 		if(!config.walk()){
 			targetMenu=new MenuEntry("Cast","<col=00ff00>Varrock Teleport</col>",1,57,-1,14286868,false);
+			utils.setMenuEntry(targetMenu);
 			utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
 		} else {
 			startTile = new WorldPoint(3196,3430,0);
