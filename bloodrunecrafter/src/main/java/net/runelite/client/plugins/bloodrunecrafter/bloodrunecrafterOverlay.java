@@ -9,14 +9,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
-import net.runelite.api.Perspective;
 import static net.runelite.api.MenuOpcode.RUNELITE_OVERLAY_CONFIG;
-import net.runelite.api.coords.LocalPoint;
 import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
 import net.runelite.client.ui.overlay.OverlayMenuEntry;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.OverlayUtil;
 import net.runelite.client.ui.overlay.components.TitleComponent;
 import net.runelite.client.ui.overlay.components.table.TableAlignment;
 import net.runelite.client.ui.overlay.components.table.TableComponent;
@@ -27,7 +24,6 @@ import static org.apache.commons.lang3.time.DurationFormatUtils.formatDuration;
 @Singleton
 class bloodrunecrafterOverlay extends OverlayPanel
 {
-	private final Client client;
 	private final bloodrunecrafterPlugin plugin;
 	private final bloodrunecrafterConfiguration config;
 
@@ -39,7 +35,6 @@ class bloodrunecrafterOverlay extends OverlayPanel
 	{
 		super(plugin);
 		setPosition(OverlayPosition.DYNAMIC);
-		this.client = client;
 		this.plugin = plugin;
 		this.config = config;
 		getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "blood runecrafter overlay"));

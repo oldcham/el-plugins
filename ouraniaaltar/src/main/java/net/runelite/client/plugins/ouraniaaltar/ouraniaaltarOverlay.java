@@ -23,19 +23,16 @@ import static org.apache.commons.lang3.time.DurationFormatUtils.formatDuration;
 @Singleton
 class ouraniaaltarOverlay extends OverlayPanel
 {
-    private final Client client;
     private final ouraniaaltarPlugin plugin;
     private final ouraniaaltarConfig config;
 
     String timeFormat;
-    private String infoStatus = "Starting...";
 
     @Inject
     private ouraniaaltarOverlay(final Client client, final ouraniaaltarPlugin plugin, final ouraniaaltarConfig config)
     {
         super(plugin);
         setPosition(OverlayPosition.DYNAMIC);
-        this.client = client;
         this.plugin = plugin;
         this.config = config;
         getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "ourania altar overlay"));

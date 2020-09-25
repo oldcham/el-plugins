@@ -10,7 +10,6 @@ import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ConfigButtonClicked;
 import net.runelite.api.events.GameTick;
-import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.queries.GameObjectQuery;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -22,7 +21,6 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
 import net.runelite.client.plugins.botutils.BotUtils;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.rs.api.RSClient;
 import org.pf4j.Extension;
 import java.awt.*;
 import java.time.Instant;
@@ -82,6 +80,8 @@ public class firemakerPlugin extends Plugin
 	final Set<GameObject> fireObjects = new HashSet<>();
 	final Set<Integer> requiredItems = new HashSet<>();
 	boolean[] pathStates;
+	WorldPoint currentLoc;
+	WorldPoint beforeLoc;
 
 	// Provides our config
 	@Provides
@@ -154,9 +154,24 @@ public class firemakerPlugin extends Plugin
 				targetMenu = null;
 				botTimer = Instant.now();
 				overlayManager.add(overlay);
+				setLocation();
 			} else {
 				shutDown();
 			}
+		}
+	}
+
+	public void setLocation()
+	{
+		if (client != null && client.getLocalPlayer() != null && client.getGameState().equals(GameState.LOGGED_IN))
+		{
+			beforeLoc = client.getLocalPlayer().getWorldLocation();
+			currentLoc = client.getLocalPlayer().getWorldLocation();
+		}
+		else
+		{
+			log.debug("Tried to start bot before being logged in");
+			startFireMaker=false;
 		}
 	}
 
@@ -184,16 +199,21 @@ public class firemakerPlugin extends Plugin
 			return;
 		}
 		player = client.getLocalPlayer();
+
 		if(player==null){
 			state = "null player";
 			return;
 		}
+		beforeLoc=currentLoc;
+		currentLoc=player.getWorldLocation();
 		if(player.getAnimation()!=-1){
 			state = "animating";
 			timeout=tickDelay();
 			return;
 		}
-		if(utils.isMoving()){
+		if(currentLoc.getX()!=beforeLoc.getX() ||
+			currentLoc.getY()!=beforeLoc.getY()){
+			state = "moving";
 			return;
 		}
 		if(timeout>0){
@@ -206,7 +226,7 @@ public class firemakerPlugin extends Plugin
 			if (utils.getInventorySpace() == 28 - requiredItems.size()) {
 				openNearestBank();
 				state = "opening nearest bank";
-				timeout = 4 + tickDelay();
+				timeout = tickDelay();
 				return;
 			}
 		}
@@ -227,22 +247,26 @@ public class firemakerPlugin extends Plugin
 				startTile = new WorldPoint(3206 + utils.getRandomIntBetweenRange(0,7), 3428, 0);
 			}
 			if (LocalPoint.fromWorld(client,startTile) != null) {
-				walk(LocalPoint.fromWorld(client,startTile), 0, sleepDelay());
+				utils.walk(LocalPoint.fromWorld(client,startTile), 0, sleepDelay());
 			}
-			timeout = 2 + tickDelay();
+			timeout = tickDelay();
 			state = "walking to start tile";
 			return;
 		}
 		if(!utils.isBankOpen()){
 			if(firstTime){
 				targetMenu=new MenuEntry("Use","<col=ff9040>Tinderbox",590,38,utils.getInventoryWidgetItem(590).getIndex(),9764864,false);
+				utils.setMenuEntry(targetMenu);
 				utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
 				firstTime=false;
+				state="lighting first log";
 				return;
 			}
 			targetMenu = new MenuEntry("Use","<col=ff9040>Tinderbox<col=ffffff> -> <col=ff9040>"+itemManager.getItemDefinition(config.logId()).getName(),config.logId(),31,utils.getInventoryWidgetItem(config.logId()).getIndex(),9764864,false);
+			utils.setMenuEntry(targetMenu);
 			utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
 			timeout = tickDelay();
+			state="lighting a log";
 			return;
 		}
 		if(utils.inventoryFull()){
@@ -252,31 +276,12 @@ public class firemakerPlugin extends Plugin
 			return;
 		}
 		if(utils.isBankOpen() && !utils.inventoryFull()){
-			withdrawLogs();
+			utils.withdrawAllItem(config.logId());
 			state = "withdrawing logs";
 			timeout=tickDelay();
 			return;
 		}
-	}
-
-	@Subscribe
-	private void onMenuOptionClicked(MenuOptionClicked e)
-	{
-		//log.info(e.toString());
-		if (walkAction)
-		{
-			e.consume();
-			log.debug("Walk action");
-			walkTile(coordX, coordY);
-			walkAction = false;
-			return;
-		}
-		if(targetMenu!=null){
-			e.consume();
-			client.invokeMenuAction(targetMenu.getOption(), targetMenu.getTarget(), targetMenu.getIdentifier(), targetMenu.getOpcode(),
-					targetMenu.getParam0(), targetMenu.getParam1());
-			targetMenu = null;
-		}
+		state = "not sure";
 	}
 
 	private void openNearestBank()
@@ -287,7 +292,11 @@ public class firemakerPlugin extends Plugin
 				.nearestTo(client.getLocalPlayer());
 		if(targetObject!=null){
 			targetMenu = new MenuEntry("","",targetObject.getId(),4,targetObject.getLocalLocation().getSceneX(),targetObject.getLocalLocation().getSceneY(),false);
+			utils.sendGameMessage(targetMenu.toString());
+			utils.setMenuEntry(targetMenu);
 			utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
+		} else {
+			utils.sendGameMessage("bank object is null.");
 		}
 	}
 
@@ -304,6 +313,7 @@ public class firemakerPlugin extends Plugin
 	private void closeBank()
 	{
 		targetMenu = new MenuEntry("Close", "", 1, 57, 11, 786434, false);
+		utils.setMenuEntry(targetMenu);
 		utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
 	}
 
@@ -314,33 +324,9 @@ public class firemakerPlugin extends Plugin
 		} else {
 			startTile = new WorldPoint(3196,3430,0);
 			if (LocalPoint.fromWorld(client,startTile) != null) {
-				walk(LocalPoint.fromWorld(client,startTile), 0, sleepDelay());
+				utils.walk(LocalPoint.fromWorld(client,startTile), 0, sleepDelay());
 			}
 		}
-	}
-
-	private void withdrawLogs(){
-		targetMenu = new MenuEntry("Withdraw-All","<col=ff9040>"+itemManager.getItemDefinition(config.logId()).getName()+"</col>",7,1007,utils.getBankItemWidget(config.logId()).getIndex(),786444,false);
-		utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
-	}
-
-	public void walk(LocalPoint localPoint, int rand, long delay)
-	{
-		coordX = localPoint.getSceneX() + utils.getRandomIntBetweenRange(-Math.abs(rand), Math.abs(rand));
-		coordY = localPoint.getSceneY() + utils.getRandomIntBetweenRange(-Math.abs(rand), Math.abs(rand));
-		walkAction = true;
-		targetMenu = new MenuEntry("Walk here", "", 0, MenuOpcode.WALK.getId(),
-				0, 0, false);
-		utils.delayMouseClick(getRandomNullPoint(),sleepDelay());
-	}
-
-	private void walkTile(int x, int y)
-	{
-		RSClient rsClient = (RSClient) client;
-		rsClient.setSelectedSceneTileX(x);
-		rsClient.setSelectedSceneTileY(y);
-		rsClient.setViewportWalking(true);
-		rsClient.setCheckClick(false);
 	}
 
 	private void checkFreePath(){

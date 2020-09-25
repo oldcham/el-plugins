@@ -25,19 +25,16 @@ import static org.apache.commons.lang3.time.DurationFormatUtils.formatDuration;
 @Singleton
 class glassblowerOverlay extends OverlayPanel
 {
-    private final Client client;
     private final glassblowerPlugin plugin;
     private final glassblowerConfig config;
 
     String timeFormat;
-    private String infoStatus = "Starting...";
 
     @Inject
     private glassblowerOverlay(final Client client, final glassblowerPlugin plugin, final glassblowerConfig config)
     {
         super(plugin);
         setPosition(OverlayPosition.DYNAMIC);
-        this.client = client;
         this.plugin = plugin;
         this.config = config;
         getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "glassblower overlay"));
@@ -60,7 +57,7 @@ class glassblowerOverlay extends OverlayPanel
         tableComponent.addRow("Time:", formatDuration(duration.toMillis(), timeFormat));
         tableComponent.addRow("Status:", plugin.outputStatus);
         tableComponent.addRow("Blowing: ", plugin.objectToBlowName);
-        tableComponent.addRow("Glass:", String.valueOf(plugin.currentAmountGlass)+"(-"+String.valueOf(plugin.startAmountGlass-plugin.currentAmountGlass)+")");
+        tableComponent.addRow("Glass:", plugin.currentAmountGlass +"(-"+ (plugin.startAmountGlass - plugin.currentAmountGlass) +")");
 
 
         if (!tableComponent.isEmpty())

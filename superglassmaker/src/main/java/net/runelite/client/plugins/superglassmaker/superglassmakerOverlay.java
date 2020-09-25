@@ -9,9 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
-import net.runelite.api.Perspective;
 import static net.runelite.api.MenuOpcode.RUNELITE_OVERLAY_CONFIG;
-import net.runelite.api.coords.LocalPoint;
 import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
 
 import net.runelite.client.ui.overlay.*;
@@ -30,7 +28,6 @@ class superglassmakerOverlay extends OverlayPanel
     private final superglassmakerConfig config;
 
     String timeFormat;
-    private String infoStatus = "Starting...";
 
     @Inject
     private superglassmakerOverlay(final Client client, final superglassmakerPlugin plugin, final superglassmakerConfig config)
